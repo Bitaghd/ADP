@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AnomalyDetection.Alerts/AnomalyDetection.Alerts.csproj" />
+    <Project Path="src/AnomalyDetection.Collector/AnomalyDetection.Collector.csproj" />
+    <Project Path="src/AnomalyDetection.Contracts/AnomalyDetection.Contracts.csproj" />
+    <Project Path="src/AnomalyDetection.Features/AnomalyDetection.Features.csproj" />
+    <Project Path="src/AnomalyDetection.Inference/AnomalyDetection.Inference.csproj" />
+    <Project Path="src/AnomalyDetection.Api/AnomalyDetection.Api.csproj" />
+    <Project Path="src/AnomalyDetection.Storage/AnomalyDetection.Storage.csproj" />
+    <Project Path="src/AnomalyDetection.Windowing/AnomalyDetection.Windowing.csproj" />
+    <Project Path="src/AnomalyDetection.Worker/AnomalyDetection.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AnomalyDetection.SmokeTests/AnomalyDetection.SmokeTests.csproj" />
+  </Folder>
+</Solution>

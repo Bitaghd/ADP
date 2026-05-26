@@ -1,0 +1,21 @@
+* text=auto
+
+*.cs text
+*.csproj text
+*.slnx text
+*.json text
+*.md text
+*.puml text
+*.ps1 text eol=crlf
+*.py text
+*.sql text
+*.yml text
+
+*.onnx binary
+*.pt binary
+*.pth binary
+*.ckpt binary
+*.npz binary
+*.parquet binary
+*.pcap binary
+*.pcapng binary

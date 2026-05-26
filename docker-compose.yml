@@ -1,0 +1,304 @@
+name: adp-prototype
+
+x-dotnet-build: &dotnet-build
+  context: .
+  dockerfile: Dockerfile
+
+x-runtime-volumes: &runtime-volumes
+  - ./configs:/app/configs:ro
+  - ./artifacts:/app/artifacts
+  - ./models:/app/models:ro
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: adp-clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    environment:
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: adp
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q Ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: adp-kafka
+    ports:
+      - "9092:9092"
+    environment:
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  clickhouse-init:
+    image: clickhouse/clickhouse-server:24.8
+    profiles: ["demo", "live", "init", "api"]
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    volumes:
+      - ./infra/clickhouse/schema.sql:/schema/schema.sql:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        clickhouse-client --host clickhouse --user default --password adp --database default --multiquery < /schema/schema.sql
+    restart: "no"
+
+  clickhouse-reset:
+    image: clickhouse/clickhouse-server:24.8
+    profiles: ["reset"]
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        clickhouse-client --host clickhouse --user default --password adp --database default --multiquery "TRUNCATE TABLE IF EXISTS zeek_conn_events; TRUNCATE TABLE IF EXISTS anomaly_alerts; TRUNCATE TABLE IF EXISTS anomaly_detections;"
+    restart: "no"
+
+  kafka-init:
+    image: confluentinc/cp-kafka:7.6.1
+    profiles: ["demo", "live", "init"]
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-lc"]
+    command:
+      - |
+        for topic in zeek.conn.raw traffic.detections traffic.alerts; do
+          kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic "$$topic" --partitions 3 --replication-factor 1;
+        done;
+        kafka-topics --bootstrap-server kafka:29092 --list
+    restart: "no"
+
+  worker-replay:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Worker
+    image: adp-worker:latest
+    profiles: ["demo"]
+    depends_on:
+      clickhouse-init:
+        condition: service_completed_successfully
+      kafka-init:
+        condition: service_completed_successfully
+    volumes: *runtime-volumes
+    command:
+      - /app/AnomalyDetection.Worker.dll
+      - --conn-log
+      - ${ADP_CONN_LOG:-artifacts/zeek/wednesday_first_2min/conn.log}
+      - --schema
+      - configs/feature_schema.json
+      - --scaler
+      - ${ADP_SCALER:-artifacts/scalers/wednesday_full.scaler.json}
+      - --threshold
+      - ${ADP_THRESHOLD:-artifacts/thresholds/wednesday_full.threshold_config.json}
+      - --model
+      - ${ADP_MODEL:-models/cnn_gru_ae_wednesday_full.onnx}
+      - --output
+      - ${ADP_OUTPUT:-artifacts/runtime/docker.detections.jsonl}
+      - --clickhouse-url
+      - http://clickhouse:8123
+      - --clickhouse-database
+      - default
+      - --clickhouse-user
+      - default
+      - --clickhouse-password
+      - adp
+      - --max-events
+      - ${ADP_MAX_EVENTS:-0}
+      - --clickhouse-batch-size
+      - ${ADP_CLICKHOUSE_BATCH_SIZE:-500}
+    restart: "no"
+
+  alerts:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Alerts
+    image: adp-alerts:latest
+    profiles: ["demo"]
+    depends_on:
+      worker-replay:
+        condition: service_completed_successfully
+    volumes: *runtime-volumes
+    command:
+      - /app/AnomalyDetection.Alerts.dll
+      - --clickhouse-url
+      - http://clickhouse:8123
+      - --clickhouse-database
+      - default
+      - --clickhouse-user
+      - default
+      - --clickhouse-password
+      - adp
+      - --lookback-hours
+      - ${ADP_ALERT_LOOKBACK_HOURS:-0}
+    restart: "no"
+
+  api:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Api
+    image: adp-api:latest
+    profiles: ["demo", "live", "api"]
+    depends_on:
+      clickhouse-init:
+        condition: service_completed_successfully
+    ports:
+      - "5088:5088"
+    environment:
+      Urls: http://0.0.0.0:5088
+      ClickHouse__BaseUrl: http://clickhouse:8123
+      ClickHouse__Database: default
+      ClickHouse__User: default
+      ClickHouse__Password: adp
+    volumes: *runtime-volumes
+    command:
+      - /app/AnomalyDetection.Api.dll
+    restart: unless-stopped
+
+  collector-live:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Collector
+    image: adp-collector:latest
+    profiles: ["live"]
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    volumes:
+      - ${ADP_LIVE_ZEEK_DIR:-./artifacts/zeek/live}:/zeek-live:ro
+    command:
+      - /app/AnomalyDetection.Collector.dll
+      - --conn-log
+      - /zeek-live/conn.log
+      - --follow
+      - --from-end
+      - --wait-for-file
+      - --kafka-bootstrap
+      - kafka:29092
+      - --kafka-address-family
+      - v4
+      - --topic
+      - zeek.conn.raw
+    restart: unless-stopped
+
+  worker-kafka:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Worker
+    image: adp-worker:latest
+    profiles: ["live"]
+    depends_on:
+      clickhouse-init:
+        condition: service_completed_successfully
+      kafka-init:
+        condition: service_completed_successfully
+    volumes: *runtime-volumes
+    command:
+      - /app/AnomalyDetection.Worker.dll
+      - --kafka-bootstrap
+      - kafka:29092
+      - --kafka-topic
+      - zeek.conn.raw
+      - --kafka-group-id
+      - ${ADP_KAFKA_GROUP_ID:-adp-worker-live}
+      - --kafka-address-family
+      - v4
+      - --kafka-idle-timeout-seconds
+      - ${ADP_KAFKA_IDLE_TIMEOUT_SECONDS:-0}
+      - --schema
+      - configs/feature_schema.json
+      - --scaler
+      - ${ADP_SCALER:-artifacts/scalers/wednesday_full.scaler.json}
+      - --threshold
+      - ${ADP_THRESHOLD:-artifacts/thresholds/wednesday_full.threshold_config.json}
+      - --model
+      - ${ADP_MODEL:-models/cnn_gru_ae_wednesday_full.onnx}
+      - --output
+      - ${ADP_OUTPUT:-artifacts/runtime/docker.kafka.detections.jsonl}
+      - --clickhouse-url
+      - http://clickhouse:8123
+      - --clickhouse-database
+      - default
+      - --clickhouse-user
+      - default
+      - --clickhouse-password
+      - adp
+      - --clickhouse-batch-size
+      - ${ADP_CLICKHOUSE_BATCH_SIZE:-25}
+    restart: unless-stopped
+
+  alerts-daemon:
+    build:
+      <<: *dotnet-build
+      args:
+        PROJECT_NAME: AnomalyDetection.Alerts
+    image: adp-alerts:latest
+    profiles: ["live"]
+    depends_on:
+      clickhouse-init:
+        condition: service_completed_successfully
+    volumes: *runtime-volumes
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        while true; do
+          dotnet /app/AnomalyDetection.Alerts.dll \
+            --clickhouse-url http://clickhouse:8123 \
+            --clickhouse-database default \
+            --clickhouse-user default \
+            --clickhouse-password adp \
+            --lookback-hours $${ADP_ALERT_LOOKBACK_HOURS:-1};
+          sleep $${ADP_ALERT_INTERVAL_SECONDS:-60};
+        done
+    restart: unless-stopped
+
+  zeek-live:
+    image: zeek/zeek:8.1
+    profiles: ["zeek-live"]
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ${ADP_LIVE_ZEEK_DIR:-./artifacts/zeek/live}:/zeek-live
+    working_dir: /zeek-live
+    command:
+      - zeek
+      - -i
+      - ${ADP_ZEEK_INTERFACE:-eth0}
+      - -C
+      - LogAscii::use_json=T
+    restart: unless-stopped
+
+volumes:
+  clickhouse_data:

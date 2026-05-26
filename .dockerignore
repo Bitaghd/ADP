@@ -1,0 +1,16 @@
+.git/
+.vs/
+.idea/
+.vscode/
+.wireshark/
+**/bin/
+**/obj/
+**/__pycache__/
+*.pyc
+data/
+offline-training/data/
+offline-training/artifacts/
+artifacts/
+models/*.pt
+models/*.pth
+models/*.ckpt

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADP Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Traffic anomaly detection</p>
+      <h1>ADP Runtime</h1>
+    </div>
+    <div class="controls" aria-label="Dashboard controls">
+      <label>
+        Window
+        <select id="lookback">
+          <option value="0">All stored</option>
+          <option value="1">1 hour</option>
+          <option value="24">24 hours</option>
+          <option value="168">7 days</option>
+        </select>
+      </label>
+      <label>
+        Bucket
+        <select id="bucket">
+          <option value="1">1 min</option>
+          <option value="5">5 min</option>
+          <option value="15">15 min</option>
+          <option value="60">1 hour</option>
+        </select>
+      </label>
+      <button id="refresh" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="status-strip" aria-live="polite">
+      <span id="storageStatus" class="status-pill status-muted">Loading</span>
+      <span id="modelVersion">Model version pending</span>
+      <span id="lastUpdated">Waiting for data</span>
+    </section>
+
+    <section class="metrics" aria-label="Overview metrics">
+      <article class="metric">
+        <span>Total detections</span>
+        <strong id="totalDetections">-</strong>
+      </article>
+      <article class="metric">
+        <span>Anomalies</span>
+        <strong id="anomalyCount">-</strong>
+      </article>
+      <article class="metric">
+        <span>Anomaly rate</span>
+        <strong id="anomalyRate">-</strong>
+      </article>
+      <article class="metric">
+        <span>Max recon. error</span>
+        <strong id="maxError">-</strong>
+      </article>
+      <article class="metric">
+        <span>Current threshold</span>
+        <strong id="currentThreshold">-</strong>
+      </article>
+      <article class="metric">
+        <span>Static threshold</span>
+        <strong id="staticThreshold">-</strong>
+      </article>
+      <article class="metric">
+        <span>Sources</span>
+        <strong id="sourceCount">-</strong>
+      </article>
+    </section>
+
+    <section class="layout">
+      <div class="main-column">
+        <section class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Detection volume</p>
+              <h2>Timeline</h2>
+            </div>
+            <span id="timelineRange" class="subtle">-</span>
+          </div>
+          <div id="timelineChart" class="chart empty">No timeline data</div>
+        </section>
+
+        <section class="panel chart-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Model score</p>
+              <h2>Score Timeline</h2>
+            </div>
+            <span id="scoreRange" class="subtle">-</span>
+          </div>
+          <div id="scoreChart" class="chart empty">No score data</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Alert queue</p>
+              <h2>Alerts</h2>
+            </div>
+            <div class="panel-actions">
+              <span id="alertCount" class="subtle">-</span>
+              <button id="alertViewToggle" class="secondary-button" type="button">Show all</button>
+            </div>
+          </div>
+          <div id="alertsList" class="alert-list empty">No alerts</div>
+        </section>
+
+        <section class="panel detections-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Latest records</p>
+              <h2>Detections</h2>
+            </div>
+            <span id="detectionCount" class="subtle">-</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Source</th>
+                  <th>Destination</th>
+                  <th>Proto</th>
+                  <th>Error</th>
+                  <th>Threshold</th>
+                  <th>Delta</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody id="detectionsBody">
+                <tr><td colspan="8">Loading detections</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="side-column">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Network stats</p>
+              <h2>Traffic rate</h2>
+            </div>
+          </div>
+          <dl class="network-grid">
+            <div>
+              <dt>Avg throughput</dt>
+              <dd id="avgThroughput">-</dd>
+            </div>
+            <div>
+              <dt>Peak throughput</dt>
+              <dd id="peakThroughput">-</dd>
+            </div>
+            <div>
+              <dt>Flow rate</dt>
+              <dd id="flowRate">-</dd>
+            </div>
+            <div>
+              <dt>Packet rate</dt>
+              <dd id="packetRate">-</dd>
+            </div>
+            <div>
+              <dt>Sources</dt>
+              <dd id="networkSourceCount">-</dd>
+            </div>
+            <div>
+              <dt>Destinations</dt>
+              <dd id="destinationCount">-</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Traffic origin</p>
+              <h2 id="trafficOriginTitle">Sources</h2>
+            </div>
+            <div class="segmented" aria-label="Traffic origin view">
+              <button id="originSources" type="button" data-origin-view="sources">Sources</button>
+              <button id="originDestinations" type="button" data-origin-view="destinations">Destinations</button>
+              <button id="originProtocols" type="button" data-origin-view="protocols">Protocols</button>
+            </div>
+          </div>
+          <div id="topSources" class="rank-list empty">No source data</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Runtime</p>
+              <h2>System load</h2>
+            </div>
+          </div>
+          <dl class="load-grid">
+            <div>
+              <dt>CPU</dt>
+              <dd id="loadCpu">-</dd>
+            </div>
+            <div>
+              <dt>Memory</dt>
+              <dd id="loadMemory">-</dd>
+            </div>
+            <div>
+              <dt>Threads</dt>
+              <dd id="loadThreads">-</dd>
+            </div>
+            <div>
+              <dt>Uptime</dt>
+              <dd id="loadUptime">-</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

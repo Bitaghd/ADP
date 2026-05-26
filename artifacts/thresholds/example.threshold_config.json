@@ -1,0 +1,37 @@
+{
+  "active_method": "target_recall",
+  "threshold": 0.9303495599342896,
+  "target_recall": 0.9,
+  "model_version": "cnn_gru_ae_wednesday_full",
+  "adaptive": {
+    "enabled": true,
+    "method": "rolling_quantile_mad",
+    "warmup_windows": 128,
+    "reference_window": 512,
+    "quantile": 0.99,
+    "mad_multiplier": 6.0,
+    "smoothing_alpha": 0.05,
+    "min_threshold_multiplier": 0.5,
+    "max_threshold_multiplier": 3.0,
+    "update_on_anomalies": false,
+    "rolling_use_context": false,
+    "rolling_use_trusted_seed": false,
+    "rolling_use_delayed_admission": false,
+    "rolling_use_freeze": false,
+    "rolling_use_asymmetric_smoothing": false,
+    "smoothing_alpha_up": 0.05,
+    "smoothing_alpha_down": 0.01
+  },
+  "fallback_methods": {
+    "percentile_90": 1.0205178260803223,
+    "percentile_95": 1.2726945877075195,
+    "percentile_99": 1.6292368173599243,
+    "mad_3": 0.13365351036190987,
+    "mad_4": 0.1579514816403389,
+    "mad_5": 0.18224945291876793,
+    "mean_std_2": 1.0702317953109741,
+    "mean_std_3": 1.4887757301330566,
+    "f1_optimal": 0.871213637672745,
+    "youden": 0.8950129151344299
+  }
+}

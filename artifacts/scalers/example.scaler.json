@@ -1,0 +1,390 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-05-14T12:13:33.205463+00:00",
+  "source_path": "artifacts\\features\\wednesday_full.raw.labeled.parquet",
+  "fit_rows": 309522,
+  "feature_order": [
+    "protocol_encoded",
+    "service_encoded",
+    "conn_state_encoded",
+    "duration",
+    "orig_bytes",
+    "resp_bytes",
+    "orig_pkts",
+    "resp_pkts",
+    "orig_ip_bytes",
+    "resp_ip_bytes",
+    "missed_bytes",
+    "src_port",
+    "dst_port",
+    "total_bytes",
+    "total_ip_bytes",
+    "total_pkts",
+    "bytes_per_sec",
+    "pkts_per_sec",
+    "orig_bytes_per_sec",
+    "resp_bytes_per_sec",
+    "orig_pkts_per_sec",
+    "resp_pkts_per_sec",
+    "orig_resp_bytes_ratio",
+    "orig_resp_pkts_ratio",
+    "avg_packet_size",
+    "avg_orig_packet_size",
+    "avg_resp_packet_size",
+    "ip_payload_ratio",
+    "has_syn",
+    "has_ack",
+    "has_fin",
+    "has_rst",
+    "has_orig_payload",
+    "has_resp_payload"
+  ],
+  "preprocessing": {
+    "nan_policy": "fill_zero",
+    "inf_policy": "clip_to_train_bounds",
+    "negative_policy": "clip_to_zero_for_non_negative_features",
+    "eps": 1e-08
+  },
+  "features": [
+    {
+      "feature": "protocol_encoded",
+      "order": 0,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 1.6579823082042633,
+      "std": 0.4744331579138536
+    },
+    {
+      "feature": "service_encoded",
+      "order": 1,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 2.0695944068596095,
+      "std": 0.667055540660269
+    },
+    {
+      "feature": "conn_state_encoded",
+      "order": 2,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 3.1691963737634157,
+      "std": 0.9927092960450415
+    },
+    {
+      "feature": "duration",
+      "order": 3,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 540.8197853195653,
+      "mean": 0.8990133179665913,
+      "std": 1.5765351135190029
+    },
+    {
+      "feature": "orig_bytes",
+      "order": 4,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 38602.89099999977,
+      "mean": 4.8607478308076,
+      "std": 1.6911574965727425
+    },
+    {
+      "feature": "resp_bytes",
+      "order": 5,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1075575.5069999895,
+      "mean": 5.808627276313544,
+      "std": 2.206291990651605
+    },
+    {
+      "feature": "orig_pkts",
+      "order": 6,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 422.0,
+      "mean": 1.5645559728988474,
+      "std": 0.9211315592961232
+    },
+    {
+      "feature": "resp_pkts",
+      "order": 7,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 491.91599999996834,
+      "mean": 1.4856937586807042,
+      "std": 0.9052846675609141
+    },
+    {
+      "feature": "orig_ip_bytes",
+      "order": 8,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 44735.04399999813,
+      "mean": 5.584784022431112,
+      "std": 1.3054316168340738
+    },
+    {
+      "feature": "resp_ip_bytes",
+      "order": 9,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 629715.5639999912,
+      "mean": 6.16222517623234,
+      "std": 1.723863438592187
+    },
+    {
+      "feature": "missed_bytes",
+      "order": 10,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 617492.4669999955,
+      "mean": 1.3635879674106148,
+      "std": 3.1333412372156095
+    },
+    {
+      "feature": "src_port",
+      "order": 11,
+      "log1p": false,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 65480.0,
+      "mean": 49198.49276949619,
+      "std": 15990.96589465449
+    },
+    {
+      "feature": "dst_port",
+      "order": 12,
+      "log1p": false,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 42375.1769999995,
+      "mean": 220.3008731851043,
+      "std": 1589.0485826697861
+    },
+    {
+      "feature": "total_bytes",
+      "order": 13,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1089516.3059999966,
+      "mean": 6.212342508014544,
+      "std": 2.131453125543461
+    },
+    {
+      "feature": "total_ip_bytes",
+      "order": 14,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 656193.9839999913,
+      "mean": 6.691520818728534,
+      "std": 1.5234000335869997
+    },
+    {
+      "feature": "total_pkts",
+      "order": 15,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 913.4789999999921,
+      "mean": 2.0685841517976526,
+      "std": 0.990253411413405
+    },
+    {
+      "feature": "bytes_per_sec",
+      "order": 16,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 74973184.00049134,
+      "mean": 8.94024938241815,
+      "std": 3.8052388459222315
+    },
+    {
+      "feature": "pkts_per_sec",
+      "order": 17,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 100000000.0,
+      "mean": 4.835350282647313,
+      "std": 3.5057661644494176
+    },
+    {
+      "feature": "orig_bytes_per_sec",
+      "order": 18,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 74973184.00049134,
+      "mean": 7.583969191402389,
+      "std": 3.804981015953781
+    },
+    {
+      "feature": "resp_bytes_per_sec",
+      "order": 19,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 3279264.990315889,
+      "mean": 8.487915160449516,
+      "std": 3.812266104343669
+    },
+    {
+      "feature": "orig_pkts_per_sec",
+      "order": 20,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 100000000.0,
+      "mean": 4.278397244963806,
+      "std": 3.386237505685802
+    },
+    {
+      "feature": "resp_pkts_per_sec",
+      "order": 21,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 29433.71228111123,
+      "mean": 4.1103058777676,
+      "std": 3.2672358719182952
+    },
+    {
+      "feature": "orig_resp_bytes_ratio",
+      "order": 22,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1025700000000.0,
+      "mean": 0.5423388112097057,
+      "std": 2.1778465729667613
+    },
+    {
+      "feature": "orig_resp_pkts_ratio",
+      "order": 23,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1300000000.0,
+      "mean": 0.9392451385935152,
+      "std": 1.961135408806503
+    },
+    {
+      "feature": "avg_packet_size",
+      "order": 24,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1665.2884719567553,
+      "mean": 4.423530457123685,
+      "std": 1.201055645229487
+    },
+    {
+      "feature": "avg_orig_packet_size",
+      "order": 25,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 1293.3666249999733,
+      "mean": 3.7131652447692596,
+      "std": 0.9621627089265204
+    },
+    {
+      "feature": "avg_resp_packet_size",
+      "order": 26,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 3557.166063210065,
+      "mean": 4.7251307850672974,
+      "std": 1.40778961726789
+    },
+    {
+      "feature": "ip_payload_ratio",
+      "order": 27,
+      "log1p": true,
+      "clip": true,
+      "clip_min": 0.0,
+      "clip_max": 4.1706804449503325,
+      "mean": 0.5624630847027429,
+      "std": 0.19999645737812807
+    },
+    {
+      "feature": "has_syn",
+      "order": 28,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.3374816652774278,
+      "std": 0.4728507067553162
+    },
+    {
+      "feature": "has_ack",
+      "order": 29,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.33244163581264013,
+      "std": 0.4710883086968473
+    },
+    {
+      "feature": "has_fin",
+      "order": 30,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.314762763228462,
+      "std": 0.4644213239217652
+    },
+    {
+      "feature": "has_rst",
+      "order": 31,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.07750014538546533,
+      "std": 0.26738338177735926
+    },
+    {
+      "feature": "has_orig_payload",
+      "order": 32,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.9556897409554087,
+      "std": 0.20578352700834088
+    },
+    {
+      "feature": "has_resp_payload",
+      "order": 33,
+      "log1p": false,
+      "clip": false,
+      "clip_min": null,
+      "clip_max": null,
+      "mean": 0.9500035538669303,
+      "std": 0.2179376092076188
+    }
+  ]
+}

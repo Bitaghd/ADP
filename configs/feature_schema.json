@@ -1,0 +1,395 @@
+{
+  "schema_version": "0.1.0",
+  "feature_count": 34,
+  "eps": 1e-8,
+  "metadata_fields": [
+    "timestamp",
+    "uid",
+    "src_ip",
+    "src_port_raw",
+    "dst_ip",
+    "dst_port_raw",
+    "proto",
+    "service",
+    "conn_state",
+    "label",
+    "is_anomaly"
+  ],
+  "categorical_encodings": {
+    "protocol": {
+      "other": 0,
+      "tcp": 1,
+      "udp": 2,
+      "icmp": 3
+    },
+    "service": {
+      "other": 0,
+      "http": 1,
+      "dns": 2,
+      "ssl": 3,
+      "ssh": 4
+    },
+    "conn_state": {
+      "other": 0,
+      "S0": 1,
+      "S1": 2,
+      "SF": 3,
+      "REJ": 4,
+      "S2": 5,
+      "S3": 6,
+      "RSTO": 7,
+      "RSTR": 8,
+      "RSTOS0": 9,
+      "RSTRH": 10,
+      "SH": 11,
+      "SHR": 12,
+      "OTH": 13
+    }
+  },
+  "features": [
+    {
+      "name": "protocol_encoded",
+      "order": 0,
+      "kind": "categorical",
+      "source": "proto",
+      "encoding": "protocol",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "service_encoded",
+      "order": 1,
+      "kind": "categorical",
+      "source": "service",
+      "encoding": "service",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "conn_state_encoded",
+      "order": 2,
+      "kind": "categorical",
+      "source": "conn_state",
+      "encoding": "conn_state",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "duration",
+      "order": 3,
+      "kind": "numeric",
+      "source": "duration",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_bytes",
+      "order": 4,
+      "kind": "numeric",
+      "source": "orig_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "resp_bytes",
+      "order": 5,
+      "kind": "numeric",
+      "source": "resp_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_pkts",
+      "order": 6,
+      "kind": "numeric",
+      "source": "orig_pkts",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "resp_pkts",
+      "order": 7,
+      "kind": "numeric",
+      "source": "resp_pkts",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_ip_bytes",
+      "order": 8,
+      "kind": "numeric",
+      "source": "orig_ip_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "resp_ip_bytes",
+      "order": 9,
+      "kind": "numeric",
+      "source": "resp_ip_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "missed_bytes",
+      "order": 10,
+      "kind": "numeric",
+      "source": "missed_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "src_port",
+      "order": 11,
+      "kind": "numeric",
+      "source": "id.orig_p",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "dst_port",
+      "order": 12,
+      "kind": "numeric",
+      "source": "id.resp_p",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "total_bytes",
+      "order": 13,
+      "kind": "derived",
+      "formula": "orig_bytes + resp_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "total_ip_bytes",
+      "order": 14,
+      "kind": "derived",
+      "formula": "orig_ip_bytes + resp_ip_bytes",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "total_pkts",
+      "order": 15,
+      "kind": "derived",
+      "formula": "orig_pkts + resp_pkts",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "bytes_per_sec",
+      "order": 16,
+      "kind": "derived",
+      "formula": "total_bytes / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "pkts_per_sec",
+      "order": 17,
+      "kind": "derived",
+      "formula": "total_pkts / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_bytes_per_sec",
+      "order": 18,
+      "kind": "derived",
+      "formula": "orig_bytes / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "resp_bytes_per_sec",
+      "order": 19,
+      "kind": "derived",
+      "formula": "resp_bytes / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_pkts_per_sec",
+      "order": 20,
+      "kind": "derived",
+      "formula": "orig_pkts / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "resp_pkts_per_sec",
+      "order": 21,
+      "kind": "derived",
+      "formula": "resp_pkts / max(duration, eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_resp_bytes_ratio",
+      "order": 22,
+      "kind": "derived",
+      "formula": "orig_bytes / (resp_bytes + eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "orig_resp_pkts_ratio",
+      "order": 23,
+      "kind": "derived",
+      "formula": "orig_pkts / (resp_pkts + eps)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "avg_packet_size",
+      "order": 24,
+      "kind": "derived",
+      "formula": "total_bytes / max(total_pkts, 1)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "avg_orig_packet_size",
+      "order": 25,
+      "kind": "derived",
+      "formula": "orig_bytes / max(orig_pkts, 1)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "avg_resp_packet_size",
+      "order": 26,
+      "kind": "derived",
+      "formula": "resp_bytes / max(resp_pkts, 1)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "ip_payload_ratio",
+      "order": 27,
+      "kind": "derived",
+      "formula": "total_bytes / max(total_ip_bytes, 1)",
+      "dtype": "float32",
+      "log1p": true,
+      "non_negative": true,
+      "clip": true
+    },
+    {
+      "name": "has_syn",
+      "order": 28,
+      "kind": "binary",
+      "source": "history contains S",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "has_ack",
+      "order": 29,
+      "kind": "binary",
+      "source": "history contains A",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "has_fin",
+      "order": 30,
+      "kind": "binary",
+      "source": "history contains F",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "has_rst",
+      "order": 31,
+      "kind": "binary",
+      "source": "history contains R",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "has_orig_payload",
+      "order": 32,
+      "kind": "binary",
+      "source": "history contains D",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    },
+    {
+      "name": "has_resp_payload",
+      "order": 33,
+      "kind": "binary",
+      "source": "history contains d",
+      "dtype": "float32",
+      "log1p": false,
+      "non_negative": true,
+      "clip": false
+    }
+  ],
+  "fallback_flow_dataset_note": "CIC flow parquet/csv can be used for offline experiments only. Runtime truth remains Zeek conn.log; fields absent from CIC are approximated and must not be treated as exact Zeek output."
+}

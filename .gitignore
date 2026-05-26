@@ -1,0 +1,66 @@
+# Local environments and editors
+.env
+.env.*
+.env.example
+.venv/
+venv/
+.vs/
+.idea/
+.vscode/
+.wireshark/
+*.user
+*.suo
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs and temporary runtime output
+*.log
+*.jsonl
+*.tmp
+*.bak
+
+# Datasets and large generated ML files
+data/
+docs/
+offline-training/
+*.pcap
+*.pcapng
+*.parquet
+*.npz
+*.pt
+*.pth
+*.ckpt
+
+# Local/generated artifacts. Only the small demo runtime set below is tracked.
+artifacts/**
+!artifacts/
+!artifacts/README.md
+!artifacts/scalers/
+!artifacts/scalers/example.scaler.json
+!artifacts/thresholds/
+!artifacts/thresholds/example.threshold_config.json
+!artifacts/zeek/
+!artifacts/zeek/example/
+!artifacts/zeek/example/conn.log
+!artifacts/runtime/
+!artifacts/runtime/.gitkeep
+
+# Model checkpoints are ignored; compact ONNX runtime models are tracked.
+models/**
+!models/
+!models/README.md
+!models/*.onnx
