@@ -3,72 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ADP Dashboard</title>
+  <title>ADP дешборд</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <header class="topbar">
     <div>
-      <p class="eyebrow">Traffic anomaly detection</p>
+      <p class="eyebrow">Обнауржение аномального трафика</p>
       <h1>ADP Runtime</h1>
     </div>
     <div class="controls" aria-label="Dashboard controls">
       <label>
-        Window
+        Окно
         <select id="lookback">
-          <option value="0">All stored</option>
-          <option value="1">1 hour</option>
-          <option value="24">24 hours</option>
-          <option value="168">7 days</option>
+          <option value="0">Всё время</option>
+          <option value="1">1 час</option>
+          <option value="24">24 часа</option>
+          <option value="168">7 дней</option>
         </select>
       </label>
       <label>
-        Bucket
+        Группировка
         <select id="bucket">
-          <option value="1">1 min</option>
-          <option value="5">5 min</option>
-          <option value="15">15 min</option>
-          <option value="60">1 hour</option>
+          <option value="1">1 мин</option>
+          <option value="5">5 мин</option>
+          <option value="15">15 мин</option>
+          <option value="60">1 час</option>
         </select>
       </label>
-      <button id="refresh" type="button">Refresh</button>
+      <button id="refresh" type="button">Обновить</button>
     </div>
   </header>
 
   <main>
     <section class="status-strip" aria-live="polite">
-      <span id="storageStatus" class="status-pill status-muted">Loading</span>
-      <span id="modelVersion">Model version pending</span>
-      <span id="lastUpdated">Waiting for data</span>
+      <span id="storageStatus" class="status-pill status-muted">Загрузка</span>
+      <span id="modelVersion">Загрузка версии модели</span>
+      <span id="lastUpdated">Ожидание данных/span>
     </section>
 
     <section class="metrics" aria-label="Overview metrics">
       <article class="metric">
-        <span>Total detections</span>
+        <span>Обнаружения</span>
         <strong id="totalDetections">-</strong>
       </article>
       <article class="metric">
-        <span>Anomalies</span>
+        <span>Аномалии</span>
         <strong id="anomalyCount">-</strong>
       </article>
       <article class="metric">
-        <span>Anomaly rate</span>
+        <span>Частота аномалий</span>
         <strong id="anomalyRate">-</strong>
       </article>
       <article class="metric">
-        <span>Max recon. error</span>
+        <span>Макс. ошибка</span>
         <strong id="maxError">-</strong>
       </article>
       <article class="metric">
-        <span>Current threshold</span>
+        <span>Текущий порог</span>
         <strong id="currentThreshold">-</strong>
       </article>
       <article class="metric">
-        <span>Static threshold</span>
+        <span>Стат. порог</span>
         <strong id="staticThreshold">-</strong>
       </article>
       <article class="metric">
-        <span>Sources</span>
+        <span>Источники</span>
         <strong id="sourceCount">-</strong>
       </article>
     </section>
@@ -78,44 +78,44 @@
         <section class="panel chart-panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Detection volume</p>
-              <h2>Timeline</h2>
+              <!-- <p class="eyebrow">Объём обнаружений</p> -->
+              <h2>Объём обнаружений</h2>
             </div>
             <span id="timelineRange" class="subtle">-</span>
           </div>
-          <div id="timelineChart" class="chart empty">No timeline data</div>
+          <div id="timelineChart" class="chart empty">Нет данных</div>
         </section>
 
         <section class="panel chart-panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Model score</p>
-              <h2>Score Timeline</h2>
+              <!-- <p class="eyebrow">Model score</p> -->
+              <h2>Порог модели</h2>
             </div>
             <span id="scoreRange" class="subtle">-</span>
           </div>
-          <div id="scoreChart" class="chart empty">No score data</div>
+          <div id="scoreChart" class="chart empty">Нет данных</div>
         </section>
 
         <section class="panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Alert queue</p>
-              <h2>Alerts</h2>
+              <!-- <p class="eyebrow">Очередь оповещений</p> -->
+              <h2>Оповещения</h2>
             </div>
             <div class="panel-actions">
               <span id="alertCount" class="subtle">-</span>
-              <button id="alertViewToggle" class="secondary-button" type="button">Show all</button>
+              <button id="alertViewToggle" class="secondary-button" type="button">Показать все</button>
             </div>
           </div>
-          <div id="alertsList" class="alert-list empty">No alerts</div>
+          <div id="alertsList" class="alert-list empty">Нет оповещений</div>
         </section>
 
         <section class="panel detections-panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Latest records</p>
-              <h2>Detections</h2>
+              <!-- <p class="eyebrow">Latest records</p> -->
+              <h2>Обнаружения</h2>
             </div>
             <span id="detectionCount" class="subtle">-</span>
           </div>
@@ -123,18 +123,18 @@
             <table>
               <thead>
                 <tr>
-                  <th>Time</th>
-                  <th>Source</th>
-                  <th>Destination</th>
-                  <th>Proto</th>
-                  <th>Error</th>
-                  <th>Threshold</th>
-                  <th>Delta</th>
-                  <th>State</th>
+                  <th>Время</th>
+                  <th>Источник</th>
+                  <th>Получатель</th>
+                  <th>Протокол</th>
+                  <th>Ошибка</th>
+                  <th>Порог</th>
+                  <th>Дельта</th>
+                  <th>Состояние</th>
                 </tr>
               </thead>
               <tbody id="detectionsBody">
-                <tr><td colspan="8">Loading detections</td></tr>
+                <tr><td colspan="8">Загрузка обнаружений</td></tr>
               </tbody>
             </table>
           </div>
@@ -145,33 +145,33 @@
         <section class="panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Network stats</p>
-              <h2>Traffic rate</h2>
+              <!-- <p class="eyebrow">Network stats</p> -->
+              <h2>Показатели сети</h2>
             </div>
           </div>
           <dl class="network-grid">
             <div>
-              <dt>Avg throughput</dt>
+              <dt>Сред. проп.способность</dt>
               <dd id="avgThroughput">-</dd>
             </div>
             <div>
-              <dt>Peak throughput</dt>
+              <dt>Макс. проп.способность</dt>
               <dd id="peakThroughput">-</dd>
             </div>
             <div>
-              <dt>Flow rate</dt>
+              <dt>Частота потока</dt>
               <dd id="flowRate">-</dd>
             </div>
             <div>
-              <dt>Packet rate</dt>
+              <dt>Частота пакетов</dt>
               <dd id="packetRate">-</dd>
             </div>
             <div>
-              <dt>Sources</dt>
+              <dt>Источники</dt>
               <dd id="networkSourceCount">-</dd>
             </div>
             <div>
-              <dt>Destinations</dt>
+              <dt>Получатели</dt>
               <dd id="destinationCount">-</dd>
             </div>
           </dl>
@@ -180,23 +180,23 @@
         <section class="panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Traffic origin</p>
-              <h2 id="trafficOriginTitle">Sources</h2>
+              <!-- <p class="eyebrow">Traffic origin</p> -->
+              <h2 id="trafficOriginTitle">Источники</h2>
             </div>
             <div class="segmented" aria-label="Traffic origin view">
-              <button id="originSources" type="button" data-origin-view="sources">Sources</button>
-              <button id="originDestinations" type="button" data-origin-view="destinations">Destinations</button>
-              <button id="originProtocols" type="button" data-origin-view="protocols">Protocols</button>
+              <button id="originSources" type="button" data-origin-view="sources">Источники</button>
+              <button id="originDestinations" type="button" data-origin-view="destinations">Получатели</button>
+              <button id="originProtocols" type="button" data-origin-view="protocols">Протоколы</button>
             </div>
           </div>
-          <div id="topSources" class="rank-list empty">No source data</div>
+          <div id="topSources" class="rank-list empty">Нет данных</div>
         </section>
 
         <section class="panel">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Runtime</p>
-              <h2>System load</h2>
+              <!-- <p class="eyebrow">Runtime</p> -->
+              <h2>Нагрузка системы</h2>
             </div>
           </div>
           <dl class="load-grid">
@@ -205,11 +205,11 @@
               <dd id="loadCpu">-</dd>
             </div>
             <div>
-              <dt>Memory</dt>
+              <dt>Память</dt>
               <dd id="loadMemory">-</dd>
             </div>
             <div>
-              <dt>Threads</dt>
+              <dt>Потоки</dt>
               <dd id="loadThreads">-</dd>
             </div>
             <div>
