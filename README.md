@@ -58,25 +58,23 @@ python scripts\run_e2e_smoke.py --reset-clickhouse
 
 ## Live-развертывание
 
-Live-режим читает Zeek JSON `conn.log`, отправляет события в Kafka, обрабатывает их Worker и пишет телеметрию в ClickHouse. Базовые настройки можно положить в `.env`:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Минимальные runtime-артефакты по умолчанию:
+Live-режим читает Zeek JSON `conn.log`, отправляет события в Kafka, обрабатывает их Worker и пишет телеметрию в ClickHouse. По умолчанию Compose ожидает live-лог здесь:
 
 ```text
-ADP_LIVE_ZEEK_DIR=./artifacts/zeek/live
-ADP_MODEL=models/cnn_gru_ae_example.onnx
-ADP_SCALER=artifacts/scalers/example.scaler.json
-ADP_THRESHOLD=artifacts/thresholds/example.threshold_config.json
-ADP_CLICKHOUSE_BATCH_SIZE=25
+artifacts/zeek/live/conn.log
+```
+
+Runtime-артефакты по умолчанию:
+
+```text
+models/cnn_gru_ae_example.onnx
+artifacts/scalers/example.scaler.json
+artifacts/thresholds/example.threshold_config.json
 ```
 
 ### Способ 1: Docker Compose + внешний Zeek
 
-Подходит для Windows, macOS и Linux, если Zeek уже установлен на хосте или на отдельном сенсоре. Zeek должен писать JSON-лог в каталог `ADP_LIVE_ZEEK_DIR`, файл должен называться `conn.log`.
+Подходит для Windows, macOS и Linux, если Zeek уже установлен на хосте или на отдельном сенсоре. Zeek должен писать JSON-лог в `artifacts/zeek/live/conn.log`.
 
 ```powershell
 New-Item -ItemType Directory -Force artifacts\zeek\live | Out-Null
@@ -96,7 +94,37 @@ $env:ADP_LIVE_ZEEK_DIR="C:\zeek-live"
 docker compose --profile live up --build
 ```
 
-### Способ 2: Docker Compose + Zeek container
+### Способ 2: WSL2 + Zeek в WSL
+
+Подходит для Windows, когда Zeek удобнее запускать внутри WSL2, а инфраструктуру - через Docker Compose из той же WSL-сессии. Команды ниже выполняются в WSL.
+
+```bash
+cd /mnt/c/Users/<windows-user>/Desktop/ADP_PROTOTYPE
+mkdir -p artifacts/zeek/live
+docker compose --profile live up --build
+```
+
+В отдельном WSL-терминале запустите Zeek из каталога, который смонтирован в `collector-live`:
+
+```bash
+cd /mnt/c/Users/<windows-user>/Desktop/ADP_PROTOTYPE/artifacts/zeek/live
+sudo zeek -i eth0 -C LogAscii::use_json=T
+```
+
+Для проверки отправляйте HTTP-запросы из WSL или с хоста, чей трафик виден выбранному интерфейсу:
+
+```bash
+cd /mnt/c/Users/<windows-user>/Desktop/ADP_PROTOTYPE
+python3 scripts/test_live_requests.py --target-url http://test-host.local/ --count 300 --concurrency 12
+```
+
+Dashboard будет доступен в Windows-браузере:
+
+```text
+http://localhost:5088/
+```
+
+### Способ 3: Docker Compose + Zeek container
 
 Подходит для Linux-хоста, где контейнеру можно дать `network_mode: host` и `NET_ADMIN`/`NET_RAW`. Интерфейс задается через `ADP_ZEEK_INTERFACE`.
 
@@ -110,7 +138,7 @@ Dashboard будет доступен на:
 http://localhost:5088/
 ```
 
-### Способ 3: гибридный запуск для разработки
+### Способ 4: гибридный запуск для разработки
 
 Инфраструктуру можно оставить в Docker, а Collector, Worker и API запустить локально из исходников.
 
