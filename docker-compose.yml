@@ -238,11 +238,11 @@ services:
       - --schema
       - configs/feature_schema.json
       - --scaler
-      - ${ADP_SCALER:-artifacts/scalers/wednesday_full.scaler.json}
+      - ${ADP_SCALER:-artifacts/scalers/example.scaler.json}
       - --threshold
-      - ${ADP_THRESHOLD:-artifacts/thresholds/wednesday_full.threshold_config.json}
+      - ${ADP_THRESHOLD:-artifacts/thresholds/example.threshold_config.json}
       - --model
-      - ${ADP_MODEL:-models/cnn_gru_ae_wednesday_full.onnx}
+      - ${ADP_MODEL:-models/cnn_gru_ae_example.onnx}
       - --output
       - ${ADP_OUTPUT:-artifacts/runtime/docker.kafka.detections.jsonl}
       - --clickhouse-url

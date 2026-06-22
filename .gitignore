@@ -64,3 +64,4 @@ models/**
 !models/
 !models/README.md
 !models/*.onnx
+/scripts
