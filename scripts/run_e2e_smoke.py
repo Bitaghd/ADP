@@ -272,11 +272,11 @@ def resolve(path: str) -> Path:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run an end-to-end smoke check for worker, alerts, and API.")
-    parser.add_argument("--conn-log", default="artifacts/zeek/wednesday_first_2min/conn.log")
+    parser.add_argument("--conn-log", default="artifacts/zeek/example/conn.log")
     parser.add_argument("--schema", default="configs/feature_schema.json")
-    parser.add_argument("--scaler", default="artifacts/scalers/wednesday_full.scaler.json")
-    parser.add_argument("--threshold", default="artifacts/thresholds/wednesday_full.threshold_config.json")
-    parser.add_argument("--model", default="models/cnn_gru_ae_wednesday_full.onnx")
+    parser.add_argument("--scaler", default="artifacts/scalers/example.scaler.json")
+    parser.add_argument("--threshold", default="artifacts/thresholds/example.threshold_config.json")
+    parser.add_argument("--model", default="models/cnn_gru_ae_example.onnx")
     parser.add_argument("--output", default="artifacts/runtime/e2e_smoke.detections.jsonl")
     parser.add_argument("--max-events", type=int, default=0)
     parser.add_argument("--window-size", type=int, default=10)

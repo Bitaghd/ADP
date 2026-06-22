@@ -110,15 +110,15 @@ services:
     command:
       - /app/AnomalyDetection.Worker.dll
       - --conn-log
-      - ${ADP_CONN_LOG:-artifacts/zeek/wednesday_first_2min/conn.log}
+      - ${ADP_CONN_LOG:-artifacts/zeek/example/conn.log}
       - --schema
       - configs/feature_schema.json
       - --scaler
-      - ${ADP_SCALER:-artifacts/scalers/wednesday_full.scaler.json}
+      - ${ADP_SCALER:-artifacts/scalers/example.scaler.json}
       - --threshold
-      - ${ADP_THRESHOLD:-artifacts/thresholds/wednesday_full.threshold_config.json}
+      - ${ADP_THRESHOLD:-artifacts/thresholds/example.threshold_config.json}
       - --model
-      - ${ADP_MODEL:-models/cnn_gru_ae_wednesday_full.onnx}
+      - ${ADP_MODEL:-models/cnn_gru_ae_example.onnx}
       - --output
       - ${ADP_OUTPUT:-artifacts/runtime/docker.detections.jsonl}
       - --clickhouse-url

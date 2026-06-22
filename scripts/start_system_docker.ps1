@@ -2,7 +2,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$ConnLog = "artifacts/zeek/wednesday_first_2min/conn.log",
+    [string]$ConnLog = "artifacts/zeek/example/conn.log",
     [string]$Output = "artifacts/runtime/docker.detections.jsonl",
     [int]$MaxEvents = 0,
     [switch]$Reset,

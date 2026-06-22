@@ -308,11 +308,11 @@ internal sealed record ReplayOptions(
             """
             Usage:
               dotnet run --project src\AnomalyDetection.Worker -- \
-                --conn-log artifacts\zeek\wednesday_first_2min\conn.log \
-                --scaler artifacts\scalers\wednesday_full.scaler.json \
-                --threshold artifacts\thresholds\wednesday_full.threshold_config.json \
-                --model models\cnn_gru_ae_wednesday_full.onnx \
-                --output artifacts\runtime\wednesday_first_2min.detections.jsonl \
+                --conn-log artifacts\zeek\example\conn.log \
+                --scaler artifacts\scalers\example.scaler.json \
+                --threshold artifacts\thresholds\example.threshold_config.json \
+                --model models\cnn_gru_ae_example.onnx \
+                --output artifacts\runtime\example.detections.jsonl \
                 --clickhouse-url http://localhost:8123 \
                 --clickhouse-user default \
                 --clickhouse-password adp
@@ -323,10 +323,10 @@ internal sealed record ReplayOptions(
                 --kafka-address-family v4 \
                 --kafka-idle-timeout-seconds 0 \
                 --max-events 674 \
-                --scaler artifacts\scalers\wednesday_full.scaler.json \
-                --threshold artifacts\thresholds\wednesday_full.threshold_config.json \
-                --model models\cnn_gru_ae_wednesday_full.onnx \
-                --output artifacts\runtime\wednesday_first_2min.kafka.detections.jsonl \
+                --scaler artifacts\scalers\example.scaler.json \
+                --threshold artifacts\thresholds\example.threshold_config.json \
+                --model models\cnn_gru_ae_example.onnx \
+                --output artifacts\runtime\example.kafka.detections.jsonl \
                 --clickhouse-url http://localhost:8123
             """);
     }

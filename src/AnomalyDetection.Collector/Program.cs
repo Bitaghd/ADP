@@ -244,7 +244,7 @@ internal sealed record CollectorOptions(
             """
             Usage:
               dotnet run --project src\AnomalyDetection.Collector -- \
-                --conn-log artifacts\zeek\wednesday_first_2min\conn.log \
+                --conn-log artifacts\zeek\example\conn.log \
                 --kafka-bootstrap localhost:9092 \
                 --topic zeek.conn.raw
 
@@ -260,7 +260,7 @@ internal sealed record CollectorOptions(
 
             Test-friendly follow mode:
               dotnet run --project src\AnomalyDetection.Collector -- \
-                --conn-log artifacts\zeek\wednesday_first_2min\conn.log \
+                --conn-log artifacts\zeek\example\conn.log \
                 --follow \
                 --idle-timeout-seconds 3 \
                 --max-events 100

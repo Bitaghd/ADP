@@ -16,8 +16,8 @@ public sealed record ModelStatusOptions(
     {
         var section = configuration.GetSection("ModelStatus");
         return new ModelStatusOptions(
-            RepositoryPaths.Resolve(repositoryRoot, section["ModelPath"] ?? Path.Combine("models", "cnn_gru_ae_wednesday_full.onnx")),
-            RepositoryPaths.Resolve(repositoryRoot, section["ThresholdConfigPath"] ?? Path.Combine("artifacts", "thresholds", "wednesday_full.threshold_config.json")),
+            RepositoryPaths.Resolve(repositoryRoot, section["ModelPath"] ?? Path.Combine("models", "cnn_gru_ae_example.onnx")),
+            RepositoryPaths.Resolve(repositoryRoot, section["ThresholdConfigPath"] ?? Path.Combine("artifacts", "thresholds", "example.threshold_config.json")),
             RepositoryPaths.Resolve(repositoryRoot, section["TrainingReportPath"] ?? Path.Combine("artifacts", "training", "wednesday_full.training.json")),
             RepositoryPaths.Resolve(repositoryRoot, section["EvaluationReportPath"] ?? Path.Combine("artifacts", "evaluation", "wednesday_full.evaluation_report.json")),
             RepositoryPaths.Resolve(repositoryRoot, section["OnnxValidationReportPath"] ?? Path.Combine("artifacts", "onnx", "wednesday_full.onnx_validation_report.json")),

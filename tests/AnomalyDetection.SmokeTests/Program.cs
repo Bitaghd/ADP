@@ -228,7 +228,7 @@ finally
     File.Delete(seedPath);
 }
 
-var onnxPath = Path.Combine(root, "models", "cnn_gru_ae_wednesday_full.onnx");
+var onnxPath = Path.Combine(root, "models", "cnn_gru_ae_example.onnx");
 if (File.Exists(onnxPath))
 {
     using var runner = new OnnxModelRunner(onnxPath);

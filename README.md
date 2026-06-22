@@ -38,10 +38,10 @@ http://localhost:5088/
 Демо по умолчанию использует:
 
 ```text
-artifacts/zeek/wednesday_first_2min/conn.log
-models/cnn_gru_ae_wednesday_full.onnx
-artifacts/scalers/wednesday_full.scaler.json
-artifacts/thresholds/wednesday_full.threshold_config.json
+artifacts/zeek/example/conn.log
+models/cnn_gru_ae_example.onnx
+artifacts/scalers/example.scaler.json
+artifacts/thresholds/example.threshold_config.json
 ```
 
 ## Локальный запуск без полного compose
@@ -54,6 +54,115 @@ artifacts/thresholds/wednesday_full.threshold_config.json
 
 ```powershell
 python scripts\run_e2e_smoke.py --reset-clickhouse
+```
+
+## Live-развертывание
+
+Live-режим читает Zeek JSON `conn.log`, отправляет события в Kafka, обрабатывает их Worker и пишет телеметрию в ClickHouse. Базовые настройки можно положить в `.env`:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Минимальные runtime-артефакты по умолчанию:
+
+```text
+ADP_LIVE_ZEEK_DIR=./artifacts/zeek/live
+ADP_MODEL=models/cnn_gru_ae_example.onnx
+ADP_SCALER=artifacts/scalers/example.scaler.json
+ADP_THRESHOLD=artifacts/thresholds/example.threshold_config.json
+ADP_CLICKHOUSE_BATCH_SIZE=25
+```
+
+### Способ 1: Docker Compose + внешний Zeek
+
+Подходит для Windows, macOS и Linux, если Zeek уже установлен на хосте или на отдельном сенсоре. Zeek должен писать JSON-лог в каталог `ADP_LIVE_ZEEK_DIR`, файл должен называться `conn.log`.
+
+```powershell
+New-Item -ItemType Directory -Force artifacts\zeek\live | Out-Null
+docker compose --profile live up --build
+```
+
+Пример запуска Zeek на хосте:
+
+```powershell
+zeek -i <interface> -C LogAscii::use_json=T
+```
+
+Если Zeek пишет в другой каталог, укажите его перед запуском Compose:
+
+```powershell
+$env:ADP_LIVE_ZEEK_DIR="C:\zeek-live"
+docker compose --profile live up --build
+```
+
+### Способ 2: Docker Compose + Zeek container
+
+Подходит для Linux-хоста, где контейнеру можно дать `network_mode: host` и `NET_ADMIN`/`NET_RAW`. Интерфейс задается через `ADP_ZEEK_INTERFACE`.
+
+```bash
+ADP_ZEEK_INTERFACE=eth0 docker compose --profile live --profile zeek-live up --build
+```
+
+Dashboard будет доступен на:
+
+```text
+http://localhost:5088/
+```
+
+### Способ 3: гибридный запуск для разработки
+
+Инфраструктуру можно оставить в Docker, а Collector, Worker и API запустить локально из исходников.
+
+```powershell
+docker compose up -d clickhouse kafka
+python scripts\init_clickhouse.py --url http://localhost:8123 --user default --password adp --database default
+powershell -ExecutionPolicy Bypass -File infra\kafka\create_topics.ps1
+```
+
+Collector:
+
+```powershell
+dotnet run --project src\AnomalyDetection.Collector -- `
+  --conn-log artifacts\zeek\live\conn.log `
+  --follow `
+  --from-end `
+  --wait-for-file `
+  --kafka-bootstrap localhost:9092 `
+  --kafka-address-family v4 `
+  --topic zeek.conn.raw
+```
+
+Worker:
+
+```powershell
+dotnet run --project src\AnomalyDetection.Worker -- `
+  --kafka-bootstrap localhost:9092 `
+  --kafka-topic zeek.conn.raw `
+  --kafka-group-id adp-worker-live `
+  --kafka-address-family v4 `
+  --kafka-idle-timeout-seconds 0 `
+  --schema configs\feature_schema.json `
+  --scaler artifacts\scalers\example.scaler.json `
+  --threshold artifacts\thresholds\example.threshold_config.json `
+  --model models\cnn_gru_ae_example.onnx `
+  --output artifacts\runtime\local.kafka.detections.jsonl `
+  --clickhouse-url http://localhost:8123 `
+  --clickhouse-user default `
+  --clickhouse-password adp `
+  --clickhouse-batch-size 25
+```
+
+API/dashboard:
+
+```powershell
+dotnet run --project src\AnomalyDetection.Api
+```
+
+Для генерации live-трафика можно отправить серию HTTP-запросов на контролируемый тестовый хост, который виден интерфейсу Zeek:
+
+```powershell
+python scripts\test_live_requests.py --target-url http://test-host.local/ --count 300 --concurrency 12
 ```
 
 ## Offline training

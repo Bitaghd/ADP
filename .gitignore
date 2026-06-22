@@ -64,4 +64,10 @@ models/**
 !models/
 !models/README.md
 !models/*.onnx
-/scripts
+/scripts/*
+!/scripts/README.md
+!/scripts/init_clickhouse.py
+!/scripts/run_e2e_smoke.py
+!/scripts/start_system.ps1
+!/scripts/start_system_docker.ps1
+!/scripts/test_live_requests.py

@@ -2,10 +2,10 @@
 
 [CmdletBinding()]
 param(
-    [string]$ConnLog = "artifacts\zeek\wednesday_first_2min\conn.log",
-    [string]$Scaler = "artifacts\scalers\wednesday_full.scaler.json",
-    [string]$Threshold = "artifacts\thresholds\wednesday_full.threshold_config.json",
-    [string]$Model = "models\cnn_gru_ae_wednesday_full.onnx",
+    [string]$ConnLog = "artifacts\zeek\example\conn.log",
+    [string]$Scaler = "artifacts\scalers\example.scaler.json",
+    [string]$Threshold = "artifacts\thresholds\example.threshold_config.json",
+    [string]$Model = "models\cnn_gru_ae_example.onnx",
     [string]$Output = "artifacts\runtime\start_system.detections.jsonl",
     [string]$ClickHouseUrl = "http://localhost:8123",
     [string]$ClickHouseDatabase = "default",
